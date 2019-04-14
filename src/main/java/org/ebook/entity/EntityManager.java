@@ -6,13 +6,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public abstract class EntityManager {
-    public static int insert(Object obj){
+    public static Object insert(Object obj){
         Session session = DatabaseAdapter.getSession();
         Transaction ts = null;
-        int id = -1;
+        Object id = null;
         try {
             ts = session.beginTransaction();
-            id = (int) session.save(obj);
+            id = session.save(obj);
             ts.commit();
         } catch (HibernateException e) {
             e.printStackTrace();

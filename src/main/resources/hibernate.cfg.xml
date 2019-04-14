@@ -9,8 +9,6 @@
         <property name="hibernate.connection.username">root</property>
         <property name="hibernate.connection.password">w8043ZRR</property>
 
-        <mapping resource="User.hbm.xml"/>
-
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hbm2ddl.auto">update</property> -->
     </session-factory>

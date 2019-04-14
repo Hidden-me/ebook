@@ -1,13 +1,19 @@
 package org.ebook.entity;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "user")
 public class User {
     private int uid;
     private String username;
     private String password;
     private boolean banned;
     private boolean online;
-    private int currentCartId;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "uid")
     public int getUid() {
         return uid;
     }
@@ -16,6 +22,7 @@ public class User {
         this.uid = uid;
     }
 
+    @Column(name = "username")
     public String getUsername() {
         return username;
     }
@@ -24,6 +31,7 @@ public class User {
         this.username = username;
     }
 
+    @Column(name = "password")
     public String getPassword() {
         return password;
     }
@@ -32,6 +40,7 @@ public class User {
         this.password = password;
     }
 
+    @Column(name = "banned")
     public boolean isBanned() {
         return banned;
     }
@@ -40,20 +49,13 @@ public class User {
         this.banned = banned;
     }
 
+    @Column(name = "online")
     public boolean isOnline() {
         return online;
     }
 
     public void setOnline(boolean online) {
         this.online = online;
-    }
-
-    public int getCurrentCartId() {
-        return currentCartId;
-    }
-
-    public void setCurrentCartId(int currentCartId) {
-        this.currentCartId = currentCartId;
     }
 
     public User() {
