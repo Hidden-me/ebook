@@ -7,7 +7,8 @@ import javax.persistence.*;
 public class User {
     private int uid;
     private String username;
-    private String password;
+    // md5(username + md5(password))
+    private String passToken;
     private boolean banned;
     private boolean online;
 
@@ -31,13 +32,13 @@ public class User {
         this.username = username;
     }
 
-    @Column(name = "password")
-    public String getPassword() {
-        return password;
+    @Column(name = "pass_token")
+    public String getPassToken() {
+        return passToken;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassToken(String passToken) {
+        this.passToken = passToken;
     }
 
     @Column(name = "banned")

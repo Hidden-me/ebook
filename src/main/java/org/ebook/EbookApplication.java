@@ -1,7 +1,5 @@
 package org.ebook;
 
-import org.ebook.entity.User;
-import org.ebook.entity.EntityManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -49,16 +49,22 @@ public class BookListGetter {
         }
         return books;
     }
-    private static String getBooksString(BookCategory category){
-        LinkedList<Book> books = getBooksFromCategory(category);
-        if(category == null && books.size() == 0){
-            // an empty "null/unclassified" category is meaningless
-            return null;
+    private static LinkedList<Book> getAllBooks(){
+        LinkedList<Book> books = null;
+        Session session = DatabaseAdapter.getSession();
+        try {
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Book> cr = cb.createQuery(Book.class);
+            cr.from(Book.class);
+            books = new LinkedList<Book>(session.createQuery(cr).getResultList());
+        } catch (HibernateException e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
         }
-        String cname = "其他读物";
-        if(category != null){
-            cname = category.getName();
-        }
+        return books;
+    }
+    private static String getBooksString(String cname, LinkedList<Book> books){
         String result = "{\"category\":\"" + cname + "\",\"books\":[";
         boolean first = true;
         for(Book b : books){
@@ -72,19 +78,34 @@ public class BookListGetter {
         result += "]}";
         return result;
     }
+    private static String getBooksString(BookCategory category){
+        LinkedList<Book> books = getBooksFromCategory(category);
+        if(category == null && books.size() == 0){
+            // an empty "null/unclassified" category is meaningless
+            return null;
+        }
+        String cname = "其他读物";
+        if(category != null){
+            cname = category.getName();
+        }
+        String result = getBooksString(cname, books);
+        return result;
+    }
+    private static String getAllBooksString(){
+        LinkedList<Book> books = getAllBooks();
+        String cname = "全部书籍";
+        String result = getBooksString(cname, books);
+        return result;
+    }
     public static String getBookListJSONString(){
         String result = "{\"library\":[";
+        result += getAllBooksString();
         LinkedList<BookCategory> categories = getBookCategories();
         categories.add(null);
-        boolean first = true;
         for(BookCategory c : categories){
             String books = getBooksString(c);
             if(books != null){
-                if(first){
-                    first = false;
-                }else{
-                    result += ",";
-                }
+                result += ",";
                 result += books;
             }
         }
