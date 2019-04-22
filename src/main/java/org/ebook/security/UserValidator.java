@@ -2,7 +2,10 @@ package org.ebook.security;
 
 import org.ebook.DatabaseAdapter;
 import org.ebook.entity.User;
+import org.ebook.entity.UserManager;
 import org.hibernate.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.criteria.*;
 import java.math.BigInteger;
@@ -10,7 +13,8 @@ import java.security.*;
 import java.util.*;
 
 public class UserValidator {
-    private static int pubkeyLength = 4;
+    private static Logger logger = LoggerFactory.getLogger(UserValidator.class);
+    private static int pubkeyLength = 8;
     // <username, pubkey>
     private static Map<String, String> pubkeys = new HashMap<String, String>();
 
@@ -33,50 +37,35 @@ public class UserValidator {
         return result;
     }
     private static User getUser(String username){
-        LinkedList<User> users = null;
-        Session session = DatabaseAdapter.getSession();
-        try {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<User> cr = cb.createQuery(User.class);
-            Root from = cr.from(User.class);
-            cr.select(from);
-            cr.where(cb.equal(from.get("username"), username));
-            users = new LinkedList<User>(session.createQuery(cr).getResultList());
-        } catch (HibernateException e) {
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-        if(users == null){
-            return null;
-        }else{
-            if(users.isEmpty()){
-                return null;
-            }
-            return users.getFirst();
-        }
+        return UserManager.getUser(username);
     }
     public static boolean validate(String username, String md5Token){
         User user = getUser(username);
         if(user != null){
             // username matches
             String pubkey = pubkeys.get(username);
+            logger.info("pubkey: " + pubkey);
             if(pubkey == null){
                 // invalid validation: validate before requesting for public key
                 return false;
             }
-            // reset the user's public key
-            pubkeys.remove(username);
             // md5 encryption & validation
             String passToken = user.getPassToken();
             String expected = md5(pubkey + passToken);
             String actual = md5Token;
             return expected.equalsIgnoreCase(actual);
         }else{
+            logger.info("user " + username + " does not exist");
             return false;
         }
     }
+    public static void removePubkey(String username){
+        pubkeys.remove(username);
+    }
     public static String getRandomPubkey(String username){
+        // reset the user's public key
+        removePubkey(username);
+        // generate a random public key
         Random r = new Random();
         char[] ch = new char[pubkeyLength];
         for(int i = 0; i < pubkeyLength; i++){

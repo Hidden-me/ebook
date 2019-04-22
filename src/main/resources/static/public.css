@@ -8,6 +8,17 @@ button.btn-outline-fav:hover {
     background-color: #ff1493;
 }
 
+.btn-implicit-dark {
+    border-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
+}
+
+button.btn-implicit-dark:hover {
+    color: #ffffff;
+    border-color: #343a40;
+    background-color: #343a40;
+}
+
 .mask {
     position: fixed;
     background-color: rgba(0, 0, 0, 0.8);

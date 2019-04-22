@@ -11,6 +11,7 @@ public class User {
     private String passToken;
     private boolean banned;
     private boolean online;
+    private boolean admin;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,4 +63,12 @@ public class User {
     public User() {
     }
 
+    @Column(name = "admin")
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
 }
