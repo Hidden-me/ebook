@@ -1,6 +1,6 @@
 package org.ebook.entity;
 
-import org.ebook.DatabaseAdapter;
+import org.ebook.DatabaseUtils;
 import org.hibernate.*;
 
 import javax.persistence.criteria.*;
@@ -10,7 +10,7 @@ import java.util.List;
 public class BookListGetter {
     private static LinkedList<BookCategory> getBookCategories(){
         LinkedList<BookCategory> cs = new LinkedList<BookCategory>();
-        Session session = DatabaseAdapter.getSession();
+        Session session = DatabaseUtils.getSession();
         try {
             CriteriaQuery<BookCategory> cr = session.getCriteriaBuilder()
                     .createQuery(BookCategory.class);
@@ -29,7 +29,7 @@ public class BookListGetter {
     }
     private static LinkedList<Book> getBooksFromCategory(BookCategory category){
         LinkedList<Book> books = null;
-        Session session = DatabaseAdapter.getSession();
+        Session session = DatabaseUtils.getSession();
         try {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Book> cr = cb.createQuery(Book.class);
@@ -51,7 +51,7 @@ public class BookListGetter {
     }
     private static LinkedList<Book> getAllBooks(){
         LinkedList<Book> books = null;
-        Session session = DatabaseAdapter.getSession();
+        Session session = DatabaseUtils.getSession();
         try {
             CriteriaBuilder cb = session.getCriteriaBuilder();
             CriteriaQuery<Book> cr = cb.createQuery(Book.class);

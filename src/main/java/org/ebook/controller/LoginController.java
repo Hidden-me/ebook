@@ -45,8 +45,8 @@ public class LoginController {
         }
         if(succ){
             HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession();
-            ss.setAttribute("username", (username == null ? "" : username));
-            ss.setAttribute("token", (token == null ? "" : token));
+            ss.setAttribute("username", username);
+            ss.setAttribute("token", token);
             logger.info("validation succeeded");
         }else{
             logger.info("validation failed");

@@ -12,6 +12,7 @@ public class User {
     private boolean banned;
     private boolean online;
     private boolean admin;
+    private String email;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,6 +62,9 @@ public class User {
     }
 
     public User() {
+        banned = false;
+        online = false;
+        admin = false;
     }
 
     @Column(name = "admin")
@@ -70,5 +74,14 @@ public class User {
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+
+    @Column(name = "email")
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -1,15 +1,10 @@
 package org.ebook.security;
 
-import org.ebook.DatabaseAdapter;
 import org.ebook.entity.User;
 import org.ebook.entity.UserManager;
-import org.hibernate.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.criteria.*;
-import java.math.BigInteger;
-import java.security.*;
 import java.util.*;
 
 public class UserValidator {
@@ -18,26 +13,8 @@ public class UserValidator {
     // <username, pubkey>
     private static Map<String, String> pubkeys = new HashMap<String, String>();
 
-    private static String md5(String origin){
-        String result = null;
-        byte[] secretBytes = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(origin.getBytes());
-            secretBytes = md.digest();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return result;
-        }
-        result = new BigInteger(1, secretBytes).toString(16);
-        int spaces = 32 - result.length();
-        for (int i = 0; i < spaces; i++) {
-            result = "0" + result;
-        }
-        return result;
-    }
     private static User getUser(String username){
-        return UserManager.getUser(username);
+        return UserManager.getUserByName(username);
     }
     public static boolean validate(String username, String md5Token){
         User user = getUser(username);
@@ -51,7 +28,7 @@ public class UserValidator {
             }
             // md5 encryption & validation
             String passToken = user.getPassToken();
-            String expected = md5(pubkey + passToken);
+            String expected = SecurityUtils.md5(pubkey + passToken);
             String actual = md5Token;
             return expected.equalsIgnoreCase(actual);
         }else{

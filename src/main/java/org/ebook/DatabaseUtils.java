@@ -4,9 +4,10 @@ import org.ebook.entity.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-public class DatabaseAdapter {
+public class DatabaseUtils {
     private static final SessionFactory ourSessionFactory;
 
     static {
@@ -15,7 +16,6 @@ public class DatabaseAdapter {
             configuration.configure();
             configuration.addAnnotatedClass(Book.class);
             configuration.addAnnotatedClass(BookCategory.class);
-            configuration.addAnnotatedClass(CartItem.class);
             configuration.addAnnotatedClass(Order.class);
             configuration.addAnnotatedClass(OrderItem.class);
             configuration.addAnnotatedClass(User.class);
@@ -27,6 +27,26 @@ public class DatabaseAdapter {
 
     public static Session getSession() throws HibernateException {
         return ourSessionFactory.openSession();
+    }
+
+    public static boolean save(Object obj){
+        boolean succ = false;
+        Session ss = getSession();
+        Transaction ts = null;
+        try {
+            ts = ss.beginTransaction();
+            ss.save(obj);
+            ts.commit();
+            succ = true;
+        } catch (HibernateException e) {
+            if (ts != null) {
+                ts.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            ss.close();
+        }
+        return succ;
     }
 
 }

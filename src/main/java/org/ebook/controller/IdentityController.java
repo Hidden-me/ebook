@@ -34,7 +34,7 @@ public class IdentityController {
             }else{
                 boolean succ = UserValidator.validate(username, token);
                 if(succ){
-                    User user = UserManager.getUser(username);
+                    User user = UserManager.getUserByName(username);
                     identity = (user.isAdmin() ? "admin" : "user");
                 }else{
                     identity = "visitor";
