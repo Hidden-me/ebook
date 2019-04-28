@@ -15,6 +15,7 @@ public class DatabaseUtils {
             Configuration configuration = new Configuration();
             configuration.configure();
             configuration.addAnnotatedClass(Book.class);
+            configuration.addAnnotatedClass(BookComment.class);
             configuration.addAnnotatedClass(BookCategory.class);
             configuration.addAnnotatedClass(Order.class);
             configuration.addAnnotatedClass(OrderItem.class);

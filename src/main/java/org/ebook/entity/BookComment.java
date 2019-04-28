@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class BookComment {
     private int id;
     private String isbn;
-    private int uid;
+    private Integer uid;
     private boolean anonymous;
     private Timestamp timeCreate;
     private String comment;
@@ -39,11 +39,11 @@ public class BookComment {
     }
 
     @Column(name = "uid")
-    public int getUid() {
+    public Integer getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(Integer uid) {
         this.uid = uid;
     }
 

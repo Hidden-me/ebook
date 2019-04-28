@@ -4,6 +4,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import javax.persistence.criteria.*;
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +35,21 @@ public class DatabaseQuery<T> {
 
     public DatabaseQuery<T> equal(String attr, Object obj){
         pred.add(cb.equal(from.get(attr), obj));
+        return this;
+    }
+
+    public DatabaseQuery<T> between(String attr, Comparable start, Comparable end){
+        pred.add(cb.between(from.get(attr), start, end));
+        return this;
+    }
+
+    public DatabaseQuery<T> ge(String attr, Comparable obj){
+        pred.add(cb.greaterThanOrEqualTo(from.get(attr), obj));
+        return this;
+    }
+
+    public DatabaseQuery<T> le(String attr, Comparable obj){
+        pred.add(cb.lessThanOrEqualTo(from.get(attr), obj));
         return this;
     }
 

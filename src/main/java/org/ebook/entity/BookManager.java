@@ -131,4 +131,10 @@ public class BookManager {
         }
         return list.get(0);
     }
+    public static String getBookDetailsString(String isbn){
+        String result = "{\"comments\":" +
+                BookCommentManager.getBookCommentsString(isbn) +
+                "}";
+        return result;
+    }
 }

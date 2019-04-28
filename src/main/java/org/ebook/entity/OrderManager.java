@@ -1,7 +1,9 @@
 package org.ebook.entity;
 
+import org.ebook.util.DatabaseQuery;
 import org.ebook.util.DatabaseUtils;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class OrderManager {
@@ -47,11 +49,18 @@ public class OrderManager {
         result += "]}";
         return result;
     }
-    public static String getOrderListStringByBuyerUid(int uid){
+    public static String getOrderListStringByBuyerUid(int uid, Timestamp start, Timestamp end){
         String result = "{\"orders\":[";
-        List<Order> orders = DatabaseUtils.createQuery(Order.class)
-                .equal("buyerUid", uid)
-                .getResult();
+        DatabaseQuery<Order> query = DatabaseUtils.createQuery(Order.class)
+                .equal("buyerUid", uid);
+        if(start != null && end != null){
+            query.between("timeCreate", start, end);
+        }else if(start != null){
+            query.ge("timeCreate", start);
+        }else if(end != null){
+            query.le("timeCreate", end);
+        }
+        List<Order> orders = query.getResult();
         boolean first = true;
         for(Order order : orders){
             String str = getOrderString(order);
@@ -67,12 +76,12 @@ public class OrderManager {
         result += "]}";
         return result;
     }
-    public static String getOrderListStringByBuyerName(String username){
+    public static String getOrderListStringByBuyerName(String username, Timestamp start, Timestamp end){
         int uid = UserManager.getUid(username);
         if(uid < 0){
             return getEmptyOrderListString();
         }
-        return getOrderListStringByBuyerUid(uid);
+        return getOrderListStringByBuyerUid(uid, start, end);
     }
     public static String getEmptyOrderListString(){
         return "{\"orders\":[]}";
