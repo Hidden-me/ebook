@@ -2,13 +2,10 @@ package org.ebook.security;
 
 import org.ebook.entity.User;
 import org.ebook.entity.UserManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class UserValidator {
-    private static Logger logger = LoggerFactory.getLogger(UserValidator.class);
     private static int pubkeyLength = 8;
     // <username, pubkey>
     private static Map<String, String> pubkeys = new HashMap<String, String>();
@@ -21,7 +18,6 @@ public class UserValidator {
         if(user != null){
             // username matches
             String pubkey = pubkeys.get(username);
-            logger.info("pubkey: " + pubkey);
             if(pubkey == null){
                 // invalid validation: validate before requesting for public key
                 return false;
@@ -32,7 +28,6 @@ public class UserValidator {
             String actual = md5Token;
             return expected.equalsIgnoreCase(actual);
         }else{
-            logger.info("user " + username + " does not exist");
             return false;
         }
     }

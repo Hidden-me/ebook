@@ -3,8 +3,6 @@ package org.ebook.controller;
 import org.ebook.entity.User;
 import org.ebook.entity.UserManager;
 import org.ebook.security.UserValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -15,7 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/identity")
 public class IdentityController {
-    private Logger logger = LoggerFactory.getLogger(getClass());
     @PostMapping
     public String getIdentity(){
         String result = "{";
@@ -36,6 +33,7 @@ public class IdentityController {
                 if(succ){
                     User user = UserManager.getUserByName(username);
                     identity = (user.isAdmin() ? "admin" : "user");
+                    ss.setAttribute("identity", identity);
                 }else{
                     identity = "visitor";
                     username = "";
@@ -44,7 +42,6 @@ public class IdentityController {
         }
         result += "\"username\":\"" + username + "\",";
         result += "\"identity\":\"" + identity + "\"}";
-        logger.info(result);
         return result;
     }
     @PostMapping("exit")

@@ -1,6 +1,6 @@
 package org.ebook.controller;
 
-import org.ebook.DatabaseUtils;
+import org.ebook.util.DatabaseUtils;
 import org.ebook.entity.User;
 import org.ebook.entity.UserManager;
 import org.ebook.security.SecurityUtils;
@@ -17,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/register")
 public class RegisterController {
     @GetMapping
-    public ModelAndView getLoginView(){
+    public ModelAndView getRegisterView(){
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         return mav;
@@ -57,6 +57,7 @@ public class RegisterController {
                 HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession();
                 ss.setAttribute("username", username);
                 ss.setAttribute("token", token);
+                ss.setAttribute("identity", "user");
             }
         }
         result += "\"username\":\"" + (username == null ? "" : username) + "\",";

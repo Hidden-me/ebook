@@ -10,7 +10,6 @@ public class User {
     // md5(username + md5(password))
     private String passToken;
     private boolean banned;
-    private boolean online;
     private boolean admin;
     private String email;
 
@@ -52,18 +51,8 @@ public class User {
         this.banned = banned;
     }
 
-    @Column(name = "online")
-    public boolean isOnline() {
-        return online;
-    }
-
-    public void setOnline(boolean online) {
-        this.online = online;
-    }
-
     public User() {
         banned = false;
-        online = false;
         admin = false;
     }
 

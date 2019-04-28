@@ -11,6 +11,11 @@ public class Order {
     private Timestamp timeCreate;
     private boolean done;
 
+    public Order(){
+        done = false;
+        timeCreate = new Timestamp(System.currentTimeMillis());
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")

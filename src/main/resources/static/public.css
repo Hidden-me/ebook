@@ -33,6 +33,14 @@ button.btn-implicit-dark:hover {
     z-index: 32767;
 }
 
+.window-sm {
+    position: fixed;
+    left: 40%;
+    top: 32vh;
+    width: 30%;
+    min-height: 36vh;
+}
+
 .window-md {
     position: fixed;
     left: 20%;

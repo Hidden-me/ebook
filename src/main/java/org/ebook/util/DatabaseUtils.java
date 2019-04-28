@@ -1,4 +1,4 @@
-package org.ebook;
+package org.ebook.util;
 
 import org.ebook.entity.*;
 import org.hibernate.HibernateException;
@@ -48,5 +48,10 @@ public class DatabaseUtils {
         }
         return succ;
     }
+
+    public static <X> DatabaseQuery<X> createQuery(Class<X> aClass){
+        return new DatabaseQuery<>(aClass);
+    }
+
 
 }
