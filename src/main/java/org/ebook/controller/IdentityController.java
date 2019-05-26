@@ -1,55 +1,36 @@
 package org.ebook.controller;
 
-import org.ebook.entity.User;
-import org.ebook.entity.UserManager;
-import org.ebook.security.UserValidator;
+import org.ebook.service.AuthService;
+import org.ebook.service.SessionService;
+import org.ebook.util.JSONResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/identity")
 public class IdentityController {
+    private AuthService auth;
+    private SessionService session;
+
+    @Autowired
+    public IdentityController(AuthService auth, SessionService session){
+        this.auth = auth;
+        this.session = session;
+    }
+
     @PostMapping
-    public String getIdentity(){
-        String result = "{";
-        String identity = "";
-        String username = "";
-        HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
-        if(ss == null){
-            // non-existing session, visitor
-            identity = "visitor";
-        }else{
-            username = (String) ss.getAttribute("username");
-            String token = (String) ss.getAttribute("token");
-            if(username == null || token == null){
-                identity = "visitor";
-                username = "";
-            }else{
-                boolean succ = UserValidator.validate(username, token);
-                if(succ){
-                    User user = UserManager.getUserByName(username);
-                    identity = (user.isAdmin() ? "admin" : "user");
-                    ss.setAttribute("identity", identity);
-                }else{
-                    identity = "visitor";
-                    username = "";
-                }
-            }
-        }
-        result += "\"username\":\"" + username + "\",";
-        result += "\"identity\":\"" + identity + "\"}";
-        return result;
+    public Map<String, Object> getAuthInfo(){
+        String username = session.getUsername();
+        String token = session.getToken();
+        JSONResponse resp = auth.getRefreshedAuthInfo(username, token);
+        session.setIdentity((String) resp.get("identity"));
+        return resp.getJSON();
     }
     @PostMapping("exit")
-    public void exitLogin(@RequestBody Map<String, Object> req){
-        String username = (String) req.get("username");
-        if(username != null){
-            // remove the user's public key
-            UserValidator.removePubkey(username);
-        }
+    public void exitLogin(){
+        String username = session.getUsername();
+        auth.exitLogin(username);
     }
 }

@@ -1,19 +1,25 @@
 package org.ebook.controller;
 
-import org.ebook.entity.Book;
-import org.ebook.entity.BookManager;
-import org.ebook.entity.CartManager;
+import org.ebook.service.CartService;
+import org.ebook.service.SessionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/cart")
 public class CartController {
+    private CartService cart;
+    private SessionService session;
+
+    @Autowired
+    public CartController(CartService cart, SessionService session){
+        this.cart = cart;
+        this.session = session;
+    }
+
     @GetMapping
     public ModelAndView getCartView(){
         ModelAndView mav = new ModelAndView();
@@ -21,96 +27,32 @@ public class CartController {
         return mav;
     }
     @PostMapping
-    public String getCartContent(){
-        HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
-        if(ss == null){
-            // offline, should login first
-            return "{\"result\":\"failure\"}";
-        }
-        String username = (String) ss.getAttribute("username");
-        String result = "{\"result\":\"success\",\"cart\":";
-        result += CartManager.getCartJSONString(username);
-        result += "}";
-        return result;
+    public Map<String, Object> getCartContent(){
+        String username = session.getUsername();
+        return cart.getCartContent(username).getJSON();
     }
     @PostMapping("add")
-    public String addToCart(@RequestBody Map<String, Object> req){
-        boolean succ = false;
+    public Map<String, Object> addToCart(@RequestBody Map<String, Object> req){
         String isbn = (String) req.get("isbn");
-        String username = null;
-        HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
-        if(ss != null){
-            username = (String) ss.getAttribute("username");
-        }
-        Book book = BookManager.getBookByISBN(isbn);
-        String message = "";
-        if(username == null){
-            message = "请先登录";
-        }else if(book == null){
-            message = "该图书不存在";
-        }else{
-            CartManager.addToCart(username, book);
-            succ = true;
-        }
-        String result = "{\"result\":\"" + (succ ? "success" : "failure") + "\"";
-        result += ",\"message\":\"" + message + "\"}";
-        return result;
+        String username = session.getUsername();
+        return cart.addToCart(username, isbn).getJSON();
     }
     @PostMapping("remove")
-    public String removeFromCart(@RequestBody Map<String, Object> req){
-        boolean succ = false;
+    public Map<String, Object> removeFromCart(@RequestBody Map<String, Object> req){
         String isbn = (String) req.get("isbn");
-        String username = null;
-        HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
-        if(ss != null){
-            username = (String) ss.getAttribute("username");
-        }
-        String message = "";
-        if(username == null){
-            message = "请先登录";
-        }else{
-            CartManager.removeFromCart(username, isbn);
-            succ = true;
-        }
-        String result = "{\"result\":\"" + (succ ? "success" : "failure") + "\"";
-        result += ",\"message\":\"" + message + "\"}";
-        return result;
+        String username = session.getUsername();
+        return cart.removeFromCart(username, isbn).getJSON();
     }
     @PostMapping("set")
-    public String setCartItemCount(@RequestBody Map<String, Object> req){
-        boolean succ = false;
+    public Map<String, Object> setCartItemCount(@RequestBody Map<String, Object> req){
         String isbn = (String) req.get("isbn");
         int count = (Integer) req.get("count");
-        String username = null;
-        HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
-        if(ss != null){
-            username = (String) ss.getAttribute("username");
-        }
-        String message = "";
-        if(username == null){
-            message = "请先登录";
-        }else{
-            succ = CartManager.setBookCount(username, isbn, count);
-            if(!succ){
-                message = "图书购买数超出库存，或少于1本";
-            }
-        }
-        String result = "{\"result\":\"" + (succ ? "success" : "failure") + "\"";
-        result += ",\"message\":\"" + message + "\"}";
-        return result;
+        String username = session.getUsername();
+        return cart.setCartItemCount(username, isbn, count).getJSON();
     }
     @PostMapping("submit")
-    public String submitOrder(){
-        String username = null;
-        HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
-        if(ss != null){
-            username = (String) ss.getAttribute("username");
-        }
-        boolean succ = CartManager.generateOrder(username);
-        if(succ){
-            CartManager.clearCart(username);
-        }
-        String result = "{\"result\":\"" + (succ ? "success" : "failure") + "\"}";
-        return result;
+    public Map<String, Object> submitOrder(){
+        String username = session.getUsername();
+        return cart.submitOrder(username).getJSON();
     }
 }

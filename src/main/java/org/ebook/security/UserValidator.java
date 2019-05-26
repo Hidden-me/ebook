@@ -1,7 +1,8 @@
 package org.ebook.security;
 
 import org.ebook.entity.User;
-import org.ebook.entity.UserManager;
+import org.ebook.dao.UserManager;
+import org.ebook.util.SecurityUtils;
 
 import java.util.*;
 

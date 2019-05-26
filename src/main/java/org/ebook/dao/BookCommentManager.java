@@ -1,14 +1,21 @@
-package org.ebook.entity;
+package org.ebook.dao;
 
+import org.ebook.entity.Book;
+import org.ebook.entity.BookComment;
+import org.ebook.entity.User;
 import org.ebook.util.DatabaseUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BookCommentManager {
-    private static String getBookCommentString(BookComment comment){
+    private static Map<String, Object> getBookCommentJSON(BookComment comment){
         if(comment == null){
             return null;
         }
+        Map<String, Object> map = new HashMap<>();
         Integer uid = comment.getUid();
         String username = "未知用户";
         if(uid != null){
@@ -17,37 +24,30 @@ public class BookCommentManager {
                 username = user.getUsername();
             }
         }
-        String result = "{\"uid\":\"" + uid + "\"," +
-                "\"username\":\"" + username + "\"," +
-                "\"date\":\"" + comment.getTimeCreate() + "\"," +
-                "\"comment\":\"" + comment.getComment() + "\"}";
-        return result;
+        map.put("uid", uid);
+        map.put("username", username);
+        map.put("date", comment.getTimeCreate());
+        map.put("comment", comment.getComment());
+        return map;
     }
-    public static String getBookCommentsString(String isbn){
+    public static List<Object> getBookCommentListJSON(String isbn){
         if(isbn == null){
-            return getEmptyCommentsString();
+            return getEmptyCommentListJSON();
         }
-        String result = "[";
+        List<Object> list = new ArrayList<>();
         List<BookComment> comments = DatabaseUtils.createQuery(BookComment.class)
                 .equal("isbn", isbn)
                 .getResult();
-        boolean first = true;
         for(BookComment c : comments){
-            String str = getBookCommentString(c);
-            if(str != null){
-                if(first){
-                    first = false;
-                }else{
-                    result += ",";
-                }
-                result += str;
+            Map<String, Object> cmt = getBookCommentJSON(c);
+            if(cmt != null){
+                list.add(cmt);
             }
         }
-        result += "]";
-        return result;
+        return list;
     }
-    public static String getEmptyCommentsString(){
-        return "[]";
+    public static List<Object> getEmptyCommentListJSON(){
+        return new ArrayList<Object>();
     }
     public static void addComment(String username, String isbn, String comment)
             throws IllegalArgumentException{

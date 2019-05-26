@@ -4,7 +4,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import javax.persistence.criteria.*;
-import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 

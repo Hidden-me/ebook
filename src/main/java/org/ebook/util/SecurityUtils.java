@@ -1,4 +1,4 @@
-package org.ebook.security;
+package org.ebook.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

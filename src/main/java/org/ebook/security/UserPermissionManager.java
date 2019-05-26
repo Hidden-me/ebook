@@ -1,6 +1,7 @@
 package org.ebook.security;
 
-import org.ebook.entity.*;
+import org.ebook.dao.UserManager;
+import org.ebook.entity.User;
 
 public class UserPermissionManager {
     public static boolean isAdmin(String username){

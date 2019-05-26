@@ -2,6 +2,8 @@ package org.ebook.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "book")
@@ -87,5 +89,17 @@ public class Book {
                 + "\"stock\":\"" + getStock() + "\","
                 + "\"price\":\"" + getPrice() + "\"}";
         return result;
+    }
+
+    @Transient
+    public Map<String, Object> getJSON(){
+        Map<String, Object> json = new HashMap<>();
+        json.put("title", getTitle());
+        json.put("author", getAuthor());
+        json.put("image", "");
+        json.put("isbn", getIsbn());
+        json.put("stock", getStock());
+        json.put("price", getPrice());
+        return json;
     }
 }

@@ -1,5 +1,7 @@
 package org.ebook.entity;
 
+import org.ebook.dao.BookManager;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 

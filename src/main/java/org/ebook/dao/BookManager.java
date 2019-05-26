@@ -1,8 +1,9 @@
-package org.ebook.entity;
+package org.ebook.dao;
 
+import org.ebook.entity.Book;
+import org.ebook.entity.BookCategory;
 import org.ebook.util.DatabaseQuery;
 import org.ebook.util.DatabaseUtils;
-import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,21 +58,17 @@ public class BookManager {
         List<Book> books = DatabaseUtils.createQuery(Book.class).getResult();
         return books;
     }
-    private static String getBooksString(String cname, List<Book> books){
-        String result = "{\"category\":\"" + cname + "\",\"books\":[";
-        boolean first = true;
+    private static Map<String, Object> getCategoryBooksJSON(String cname, List<Book> books){
+        Map<String, Object> map = new HashMap<>();
+        map.put("category", cname);
+        List<Object> bookList = new ArrayList<>();
         for(Book b : books){
-            if(first){
-                first = false;
-            }else{
-                result += ",";
-            }
-            result += b.toJSONString();
+            bookList.add(b.getJSON());
         }
-        result += "]}";
-        return result;
+        map.put("books", bookList);
+        return map;
     }
-    private static String getBooksString(BookCategory category, List<String> titleFilters){
+    private static Map<String, Object> getCategoryBooksJSON(BookCategory category, List<String> titleFilters){
         List<Book> books = getBooks(category, titleFilters);
         if(category == null && books.size() == 0){
             // an empty "null/unclassified" category is meaningless
@@ -81,46 +78,43 @@ public class BookManager {
         if(category != null){
             cname = category.getName();
         }
-        String result = getBooksString(cname, books);
-        return result;
+        return getCategoryBooksJSON(cname, books);
     }
-    private static String getBooksString(BookCategory category){
+    private static Map<String, Object> getCategoryBooksJSON(BookCategory category){
+        // empty filters
         List<String> tmp = new ArrayList<>();
-        return getBooksString(category, tmp);
+        return getCategoryBooksJSON(category, tmp);
     }
-    private static String getBooksString(List<String> titleFilters){
+    private static Map<String, Object> getBooksJSON(List<String> titleFilters){
         List<Book> books = getBooks(titleFilters);
         String cname = "全部分类";
-        String result = getBooksString(cname, books);
-        return result;
+        return getCategoryBooksJSON(cname, books);
     }
-    private static String getAllBooksString(){
+    private static Map<String, Object> getAllBooksJSON(){
         List<Book> books = getAllBooks();
         String cname = "全部分类";
-        String result = getBooksString(cname, books);
-        return result;
+        return getCategoryBooksJSON(cname, books);
     }
-    public static String getBookListJSONString(List<String> titleFilters){
-        for(String s : titleFilters){
-            logger.info("title:" + s);
-        }
-        String result = "{\"library\":[";
-        result += getBooksString(titleFilters);
+    public static List<Object> getBookListJSON(List<String> titleFilters){
+        List<Object> list = new ArrayList<>();
+        // "all books" category
+        list.add(getBooksJSON(titleFilters));
+        // category list
         List<BookCategory> categories = getBookCategories();
+        // "unclassified" category
         categories.add(null);
+        // add JSONs to the result list
         for(BookCategory c : categories){
-            String books = getBooksString(c, titleFilters);
+            Map<String, Object> books = getCategoryBooksJSON(c, titleFilters);
             if(books != null){
-                result += ",";
-                result += books;
+                list.add(books);
             }
         }
-        result += "]}";
-        return result;
+        return list;
     }
-    public static String getBookListJSONString(){
+    public static List<Object> getBookListJSON(){
         List<String> tmp = new ArrayList<>();
-        return getBookListJSONString(tmp);
+        return getBookListJSON(tmp);
     }
     public static Book getBookByISBN(String isbn){
         List<Book> list = DatabaseUtils.createQuery(Book.class)
@@ -130,11 +124,5 @@ public class BookManager {
             return null;
         }
         return list.get(0);
-    }
-    public static String getBookDetailsString(String isbn){
-        String result = "{\"comments\":" +
-                BookCommentManager.getBookCommentsString(isbn) +
-                "}";
-        return result;
     }
 }

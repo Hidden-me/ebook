@@ -1,5 +1,9 @@
-package org.ebook.entity;
+package org.ebook.dao;
 
+import org.ebook.entity.Book;
+import org.ebook.entity.CartItem;
+import org.ebook.entity.Order;
+import org.ebook.entity.OrderItem;
 import org.ebook.util.DatabaseUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,32 +32,29 @@ public class CartManager {
         List<CartItem> cart = carts.get(username);
         return getCartItem(cart, isbn);
     }
-    public static String getCartJSONString(String username){
-        List<CartItem> cart = carts.get(username);
-        if(cart == null){
-            return "{\"items\":[]}";
+    public static Map<String, Object> getCartItemJSON(CartItem item){
+        Map<String, Object> json = new HashMap<>();
+        Book book = BookManager.getBookByISBN(item.getIsbn());
+        if(book != null){
+            json.put("book", book.getJSON());
+            json.put("count", item.getCount());
+            json.put("price", item.getPrice());
         }
-        String result = "{\"items\":[";
-        boolean first = true;
-        for(CartItem item : cart){
-            String isbn = item.getIsbn();
-            int count = item.getCount();
-            BigDecimal price = item.getPrice();
-            Book book = BookManager.getBookByISBN(isbn);
-            if(book != null){
-                if(first){
-                    first = false;
-                }else{
-                    result += ",";
-                }
-                result += "{\"book\":";
-                result += book.toJSONString();
-                result += ",\"count\":\"" + count + "\"";
-                result += ",\"price\":\"" + price + "\"}";
+        return json;
+    }
+
+    public static Map<String, Object> getCartJSON(String username){
+        Map<String, Object> json = new HashMap<>();
+        List<Object> listJSON = new ArrayList<>();
+        List<CartItem> cart = carts.get(username);
+        if(cart != null){
+            boolean first = true;
+            for(CartItem item : cart){
+                listJSON.add(getCartItemJSON(item));
             }
         }
-        result += "]}";
-        return result;
+        json.put("items", listJSON);
+        return json;
     }
     public static void addToCart(String username, Book book){
         List<CartItem> cart = carts.get(username);

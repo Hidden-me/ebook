@@ -1,5 +1,7 @@
 package org.ebook.entity;
 
+import org.ebook.util.DateUtils;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -73,4 +75,5 @@ public class BookComment {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
 }

@@ -1,5 +1,6 @@
-package org.ebook.entity;
+package org.ebook.dao;
 
+import org.ebook.entity.User;
 import org.ebook.util.DatabaseUtils;
 
 import java.util.*;
