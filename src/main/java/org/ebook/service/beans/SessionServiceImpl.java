@@ -6,9 +6,14 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SessionServiceImpl implements SessionService {
+    // <username, isbn>
+    private static Map<String, String> lastReferencedBookIsbnMap = new HashMap<>();
+
     private Object getAttribute(String name){
         HttpSession ss = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(false);
         if(ss == null){
@@ -47,4 +52,14 @@ public class SessionServiceImpl implements SessionService {
         setAttribute("token", token);
     }
 
+    public void setLastReferencedBookIsbn(String isbn){
+        String username = getUsername();
+        lastReferencedBookIsbnMap.remove(username);
+        lastReferencedBookIsbnMap.put(username, isbn);
+    }
+
+    public String getLastReferencedBookIsbn(){
+        String username = getUsername();
+        return lastReferencedBookIsbnMap.get(username);
+    }
 }

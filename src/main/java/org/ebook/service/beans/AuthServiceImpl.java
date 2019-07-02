@@ -5,17 +5,27 @@ import org.ebook.entity.User;
 import org.ebook.security.UserValidator;
 import org.ebook.service.AuthService;
 import org.ebook.util.JSONResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthServiceImpl implements AuthService {
+    private UserManager userManager;
+    private UserValidator userValidator;
+
+    @Autowired
+    public AuthServiceImpl(UserManager userManager, UserValidator userValidator){
+        this.userManager = userManager;
+        this.userValidator = userValidator;
+    }
+
     public JSONResponse validate(String username, String token){
         JSONResponse resp = new JSONResponse();
         String identity = "user";
         boolean succ = false, banned = false;
         if(username != null && token != null){
-            succ = UserValidator.validate(username, token);
-            User user = UserManager.getUserByName(username);
+            succ = userValidator.validate(username, token);
+            User user = userManager.getUserByName(username);
             if(user != null){
                 banned = user.isBanned();
                 if(user.isAdmin()){
@@ -40,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
         JSONResponse resp = new JSONResponse();
         String key = "";
         if(username != null){
-            key = UserValidator.getRandomPubkey(username);
+            key = userValidator.getRandomPubkey(username);
         }
         resp.put("pubkey", key);
         resp.succeed();
@@ -52,9 +62,9 @@ public class AuthServiceImpl implements AuthService {
         if(username == null || token == null){
             username = "";
         }else{
-            boolean succ = UserValidator.validate(username, token);
+            boolean succ = userValidator.validate(username, token);
             if(succ){
-                User user = UserManager.getUserByName(username);
+                User user = userManager.getUserByName(username);
                 identity = user.isAdmin() ? "admin" : "user";
             }else{
                 username = "";
@@ -68,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
     public void exitLogin(String username){
         if(username != null){
             // remove the user's public key
-            UserValidator.removePubkey(username);
+            userValidator.removePubkey(username);
         }
     }
 }

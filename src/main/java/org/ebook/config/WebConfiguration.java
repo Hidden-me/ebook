@@ -5,7 +5,7 @@ import org.springframework.context.annotation.*;
 import org.springframework.http.HttpStatus;
 
 @Configuration
-public class EbookServletConfiguration {
+public class WebConfiguration {
     @Bean
     public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryCustomizer() {
         return factory -> {

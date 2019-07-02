@@ -30,13 +30,45 @@ public class DatabaseUtils {
         return ourSessionFactory.openSession();
     }
 
-    public static boolean save(Object obj){
+    public static boolean save(Object obj, boolean insert){
         boolean succ = false;
         Session ss = getSession();
         Transaction ts = null;
         try {
             ts = ss.beginTransaction();
-            ss.save(obj);
+            if(insert){
+                ss.save(obj);
+            }else{
+                ss.update(obj);
+            }
+            ts.commit();
+            succ = true;
+        } catch (HibernateException e) {
+            if (ts != null) {
+                ts.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            ss.close();
+        }
+        return succ;
+    }
+
+    public static boolean insert(Object obj) {
+        return save(obj, true);
+    }
+
+    public static boolean update(Object obj) {
+        return save(obj, false);
+    }
+
+    public static boolean delete(Object obj) {
+        boolean succ = false;
+        Session ss = getSession();
+        Transaction ts = null;
+        try {
+            ts = ss.beginTransaction();
+            ss.delete(obj);
             ts.commit();
             succ = true;
         } catch (HibernateException e) {

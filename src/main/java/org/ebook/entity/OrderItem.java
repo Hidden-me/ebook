@@ -22,27 +22,6 @@ public class OrderItem {
         setOrderId(orderId);
     }
 
-    public OrderItem(Order order, CartItem citem){
-        if(order != null){
-            setOrderId(order.getOrderId());
-        }else{
-            return;
-        }
-        if(citem != null){
-            Book book = BookManager.getBookByISBN(citem.getIsbn());
-            if(book != null){
-                setBookTitle(book.getTitle());
-                setBookAuthor(book.getAuthor());
-            }else{
-                setBookTitle("");
-                setBookAuthor("");
-            }
-            setPrice(citem.getPrice());
-            setAmount(citem.getCount());
-            setBookIsbn(citem.getIsbn());
-        }
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_id")

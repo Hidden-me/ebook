@@ -2,8 +2,6 @@ package org.ebook.entity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 @Entity
 @Table(name = "book")
@@ -13,8 +11,8 @@ public class Book {
     private String author;
     private BigDecimal price;
     private int stock;
-    private byte[] image;
     private Integer categoryId;
+    private boolean hasImage;
 
     @Id
     @Column(name = "isbn")
@@ -62,15 +60,6 @@ public class Book {
         this.stock = stock;
     }
 
-    @Column(name = "image")
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
     @Column(name = "category_id")
     public Integer getCategoryId() {
         return categoryId;
@@ -80,26 +69,13 @@ public class Book {
         this.categoryId = categoryId;
     }
 
-    public String toJSONString(){
-        //TODO: image BLOB
-        String result = "{\"title\":\"" + getTitle() + "\","
-                + "\"author\":\"" + getAuthor() + "\","
-                + "\"image\":\"" /*+ getImage()*/ + "\","
-                + "\"isbn\":\"" + getIsbn() + "\","
-                + "\"stock\":\"" + getStock() + "\","
-                + "\"price\":\"" + getPrice() + "\"}";
-        return result;
+    @Column(name = "has_image")
+    public boolean isHasImage() {
+        return hasImage;
     }
 
-    @Transient
-    public Map<String, Object> getJSON(){
-        Map<String, Object> json = new HashMap<>();
-        json.put("title", getTitle());
-        json.put("author", getAuthor());
-        json.put("image", "");
-        json.put("isbn", getIsbn());
-        json.put("stock", getStock());
-        json.put("price", getPrice());
-        return json;
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
+
 }

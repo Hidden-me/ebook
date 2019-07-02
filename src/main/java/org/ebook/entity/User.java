@@ -1,6 +1,8 @@
 package org.ebook.entity;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "user")
@@ -72,5 +74,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Transient
+    public Map<String, Object> getJSON(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("uid", getUid());
+        map.put("username", getUsername());
+        map.put("banned", isBanned());
+        return map;
     }
 }

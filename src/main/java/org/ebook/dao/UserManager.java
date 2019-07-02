@@ -1,55 +1,15 @@
 package org.ebook.dao;
 
 import org.ebook.entity.User;
-import org.ebook.util.DatabaseUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-public class UserManager {
-    public static User getUserByUid(int uid){
-        List<User> users = DatabaseUtils.createQuery(User.class)
-                .equal("uid", uid)
-                .getResult();
-        if(users == null){
-            return null;
-        }else{
-            if(users.isEmpty()){
-                return null;
-            }
-            return users.get(0);
-        }
-    }
-    public static User getUserByName(String username){
-        List<User> users = DatabaseUtils.createQuery(User.class)
-                .equal("username", username)
-                .getResult();
-        if(users == null){
-            return null;
-        }else{
-            if(users.isEmpty()){
-                return null;
-            }
-            return users.get(0);
-        }
-    }
-    public static User getUserByEmail(String email){
-        List<User> users = DatabaseUtils.createQuery(User.class)
-                .equal("email", email)
-                .getResult();
-        if(users == null){
-            return null;
-        }else{
-            if(users.isEmpty()){
-                return null;
-            }
-            return users.get(0);
-        }
-    }
-    public static int getUid(String username){
-        User user = getUserByName(username);
-        if(user == null){
-            return -1;
-        }
-        return user.getUid();
-    }
+public interface UserManager {
+    User getUserByUid(int uid);
+    User getUserByName(String username);
+    User getUserByEmail(String email);
+    Map<String, Object> getUserJSONByUid(int uid);
+    List<Object> getUserListJSON();
+    int getUid(String username);
 }

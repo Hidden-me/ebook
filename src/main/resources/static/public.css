@@ -34,7 +34,7 @@ button.btn-implicit-dark:hover {
 }
 
 .window-sm {
-    position: fixed;
+    position: absolute;
     left: 40%;
     top: 32vh;
     width: 30%;
@@ -42,9 +42,24 @@ button.btn-implicit-dark:hover {
 }
 
 .window-md {
-    position: fixed;
+    position: absolute;
     left: 20%;
     top: 15vh;
     width: 60%;
     min-height: 70vh;
+}
+
+.pic-item {
+    position: relative;
+    width: 150px;
+    height: 160px;
+}
+
+.pic-item input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 150px;
+    height: 160px;
+    opacity: 0;
 }

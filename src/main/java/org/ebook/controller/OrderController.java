@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @RestController
-@RequestMapping("/order")
 public class OrderController {
     private OrderService order;
     private SessionService session;
@@ -20,17 +19,25 @@ public class OrderController {
         this.session = session;
     }
 
-    @GetMapping
+    @GetMapping("/order")
     public ModelAndView getOrderView(){
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index");
         return mav;
     }
-    @PostMapping
+    @PostMapping("/order")
     public Map<String, Object> getOrderList(@RequestBody Map<String, Object> req){
         String username = session.getUsername();
         String identity = session.getIdentity();
         Map<String, Object> timeFilter = (Map<String, Object>) req.get("time");
-        return order.getOrderList(username, identity, timeFilter).getJSON();
+        Map<String, Object> uidFilter = (Map<String, Object>) req.get("uid");
+        Map<String, Object> orderIdFilter = (Map<String, Object>) req.get("orderid");
+        Map<String, Object> isbnFilter = (Map<String, Object>) req.get("isbn");
+        return order.getOrderList(username, identity, timeFilter,
+                uidFilter, orderIdFilter, isbnFilter).getJSON();
+    }
+    @PostMapping("/admin/order")
+    public Map<String, Object> getAllOrders(@RequestBody Map<String, Object> req){
+        return getOrderList(req);
     }
 }

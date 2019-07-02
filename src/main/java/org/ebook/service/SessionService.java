@@ -7,4 +7,6 @@ public interface SessionService {
     void setUsername(String username);
     void setIdentity(String identity);
     void setToken(String token);
+    void setLastReferencedBookIsbn(String isbn);
+    String getLastReferencedBookIsbn();
 }

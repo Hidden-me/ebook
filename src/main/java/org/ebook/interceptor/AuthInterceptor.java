@@ -1,11 +1,18 @@
 package org.ebook.interceptor;
 
 import org.ebook.security.UserValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.*;
 
 import javax.servlet.http.*;
 
 public class AuthInterceptor implements HandlerInterceptor {
+    private UserValidator userValidator;
+
+    @Autowired
+    public void setUserValidator(UserValidator userValidator){
+        this.userValidator = userValidator;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse resp, Object obj)
@@ -39,7 +46,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             resp.sendRedirect(loginPath);
             return false;
         } else {
-            boolean succ = UserValidator.validate(username, token);
+            boolean succ = userValidator.validate(username, token);
             if(!succ){
                 // authentication failed
                 if(path[1].equals("login") || path[1].equals("register")){
@@ -67,7 +74,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                         return false;
                     }
                     return true;
-                }else if(path[1].equals("management")){
+                }else if(path[1].equals("management") || path[1].equals("admin")){
                     // those pages needs "admin" identity
                     if(!identity.equals("admin")){
                         // access denied
